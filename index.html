@@ -3,78 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Responsive Navbar mit dynamischem Inhalt</title>
+    <title>Document-Tile mit fester Größe</title>
     <style>
-        *, *::before, *::after {
-            box-sizing: border-box;
-        }
+        /* Globale Stile und Reset */
         * {
+            box-sizing: border-box;
             margin: 0;
+            padding: 0;
         }
+
         body {
-            font-family: Arial, sans-serif;
-            width: 90%;
-            margin-inline: auto;
-        }
-        img {
-            max-width: 100%;
-            display: block;
-        }
-        .wrapper {
-            display: grid;
-            grid-template-columns: repeat(1, 1fr);
-            gap: 1rem;
-            margin-top: 5rem;
-        }
-        .box {
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            padding: 2rem;
-            text-align: center;
-            display: grid;
-            grid-template-rows: auto 1fr auto;
-            gap: 1rem;
-        }
-        .navbar {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f0f0;
             display: flex;
-            justify-content: space-around;
-            background-color: #f8f9fa;
-            padding: 1rem;
-            border-radius: 6px;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
         }
-        .navbar a {
-            text-decoration: none;
-            color: #333;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-        .navbar a:hover, .navbar a.active {
-            background-color: #007bff;
-            color: white;
-        }
-        #content {
-            min-height: 500px;
-            padding: 1rem;
-            background-color: #f8f9fa;
-            border-radius: 6px;
-        }
-        textarea {
+
+        /* Kachel-Wrapper */
+        .tile-wrapper {
+            background-color: #ffffff;
+            border: 2px solid #ddd;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
             width: 100%;
-            height: 100px;
-            margin-top: 20%;
-            margin-bottom: 1rem;
-            resize: none;
+            max-width: 960px;
+        }
+
+        /* Kachel-Container */
+        #tile-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        /* Dokumentkachel */
+        .document-tile {
+            display: flex;
+            flex-direction: column;
+            height: 200px;
+            width: 355px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .document-tile:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+        }
+
+        /* Kachelkomponenten */
+        .tile-header {
+            background-color: #ff8a16;
+            color: white;
+            padding: 10px 15px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        .document-title {
+            font-size: 16px;
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .tile-body {
+            flex-grow: 1;
+            padding: 10px 15px;
+            overflow-y: auto;
+        }
+
+        .document-description {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .tile-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f1f1f1;
+            padding: 10px 15px;
+            font-size: 12px;
+            color: #888;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+
+        /* Buttons */
+        .button-container {
+            display: flex;
+        }
+
+        button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            margin-left: 10px;
+            transition: transform 0.2s ease;
+        }
+
+        button:hover {
+            transform: scale(1.1);
+        }
+
+        /* Responsives Design */
+        @media (max-width: 600px) {
+            #tile-container {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 </head>
 <body>
-<div class="wrapper">
-    <div class="box">
-        <div id="layout">
-            <div name=""
-        </div>
-    </div>
+<div class="tile-wrapper">
+    <div id="tile-container"></div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<script>
+    class DocumentTile {
+        constructor(title, description, creationDate) {
+            this.title = title;
+            this.description = description;
+            this.creationDate = creationDate;
+        }
+
+        createTileElement() {
+            const tileElement = document.createElement('div');
+            tileElement.className = 'document-tile';
+            tileElement.innerHTML = `
+                    <div class="tile-header">
+                        <div class="document-title" title="${this.title}">${this.title}</div>
+                    </div>
+                    <div class="tile-body">
+                        <div class="document-description">${this.description}</div>
+                    </div>
+                    <div class="tile-footer">
+                        <div class="creation-date">${this.creationDate}</div>
+                        <div class="button-container">
+                            <button class="edit-btn" onclick="editDocument('${this.title}')" aria-label="Bearbeiten"><span class="ui-icon ui-icon-pencil"></span></button>
+                            <button class="delete-btn" onclick="deleteDocument('${this.title}')" aria-label="Löschen"><span class="ui-icon ui-icon-trash"></span></button>
+                        </div>
+                    </div>
+                `;
+            return tileElement;
+        }
+    }
+
+    const exampleTiles = [
+        new DocumentTile('Projektplan Q3', 'Detaillierte Planung..', '01.07.2024'),
+        new DocumentTile('Budgetübersicht', 'Finanzielle Zusammenfassung des laufenden Geschäftsjahres mit Prognosen.', '15.07.2024'),
+        new DocumentTile('Lange Budgetübersicht', 'Finanzielle Zusammenfassung des laufenden Geschäftsjahres mit Prognosen. Finanzielle Zusammenfassung des laufenden Geschäftsjahres mit Prognosen. Finanzielle Zusammenfassung des laufenden Geschäftsjahres mit Prognosen. Finanzielle Zusammenfassung des laufenden Geschäftsjahres mit Prognosen. Finanzielle Zusammenfassung des laufenden Geschäftsjahres mit Prognosen. Finanzielle Zusammenfassung des laufenden Geschäftsjahres mit Prognosen.', '15.07.2024'),
+    ];
+
+    function showTiles() {
+        const tileContainer = document.getElementById('tile-container');
+        tileContainer.innerHTML = '';
+        exampleTiles.forEach(tile => {
+            tileContainer.appendChild(tile.createTileElement());
+        });
+    }
+
+    function editDocument(title) {
+        alert(`Dokument "${title}" wird bearbeitet`);
+    }
+
+    function deleteDocument(title) {
+        if (confirm(`Möchten Sie das Dokument "${title}" wirklich löschen?`)) {
+            alert(`Dokument "${title}" wurde gelöscht`);
+        }
+    }
+
+    showTiles();
+</script>
 </body>
 </html>
